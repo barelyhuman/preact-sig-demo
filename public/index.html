@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="app">
+      <!-- app-populate -->
+    </div>
+    <script type="importmap">
+      {
+        "imports": {
+          "@preact/signals": "https://ga.jspm.io/npm:@preact/signals@1.2.2/dist/signals.module.js",
+          "@preact/signals-core": "https://ga.jspm.io/npm:@preact/signals-core@1.5.1/dist/signals-core.module.js",
+          "preact": "https://ga.jspm.io/npm:preact@10.19.3/dist/preact.module.js",
+          "preact/hooks": "https://ga.jspm.io/npm:preact@10.19.3/hooks/dist/hooks.module.js"
+        }
+      }
+    </script>
+
+    <!-- ES Module Shims: Import maps polyfill for older browsers without import maps support (eg Safari 16.3) -->
+    <script
+      async
+      src="https://ga.jspm.io/npm:es-module-shims@1.8.2/dist/es-module-shims.js"
+      crossorigin="anonymous"
+    ></script>
+
+    <script type="module" async defer>
+      import { h, hydrate } from "preact";
+      import { persistedSignal } from "./public/persist.js";
+      import { HydratedText } from "./public/component.js";
+      const db = persistedSignal({ d: "hello" }, "db");
+
+      const App = () => {
+        return h(HydratedText, { value: db.value.d });
+      };
+
+      hydrate(h(App), document.getElementById("app"));
+
+      setTimeout(() => {
+        const item = localStorage.getItem("db");
+        if (item) {
+          console.log("exists");
+        } else {
+          db.value = {
+            d: "hello world",
+          };
+        }
+      }, 3000);
+    </script>
+  </body>
+</html>
